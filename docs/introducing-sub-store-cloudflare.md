@@ -31,7 +31,7 @@ sub-store-cloudflare 是一个跑在 Cloudflare Workers 上的订阅聚合工具
 2. **可以先用 workers.dev。** 实际可访问性取决于用户所在网络和 Cloudflare 路由；如果不稳定，可以绑定自己的管理或下载域名。
 3. **部署完就是 Web 管理界面加下载端点。** 手机也能开网页改配置。
 
-技术栈刻意保持小：Cloudflare Worker + Static Assets + D1 + Worker Secrets。KV、R2、Durable Objects、Queue、Cron 都不在核心路径里。
+技术栈刻意保持小：Cloudflare Worker + Static Assets + D1 + KV + Worker Secrets。KV 仅承担模板/规则最后成功副本；R2、Durable Objects、Queue、Cron 都不在核心路径里。
 
 ## 怎么部署
 

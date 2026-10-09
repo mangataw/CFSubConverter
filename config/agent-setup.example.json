@@ -3,6 +3,10 @@
   "deployment": {
     "workerName": "sub-store-cloudflare",
     "d1DatabaseName": "sub-store-cloudflare",
+    "remoteTemplateId": "github-mihomo",
+    "remoteTemplateUrl": "https://raw.githubusercontent.com/mangataw/LadderTools/main/configs/mihomo.yaml",
+    "remoteTemplateAllowedHosts": "raw.githubusercontent.com",
+    "remoteAssetCacheSeconds": "300",
     "adminHostname": "",
     "downloadHostname": "",
     "downloadTargets": ["mihomo", "sing-box", "uri"]
@@ -37,7 +41,7 @@
       "id": "daily",
       "name": "Daily",
       "sourceIds": ["airport-a", "home-node"],
-      "templateId": "acl4ssr-mihomo",
+      "templateId": "github-mihomo",
       "ignoreFailed": true,
       "filterPresetIds": ["dedupe-by-endpoint", "sort-by-name"],
       "filters": [],

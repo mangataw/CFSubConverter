@@ -15,6 +15,7 @@ describe("Worker and D1 integration", () => {
       "d1_migrations",
       "download_grants",
       "recycle_bin",
+      "remote_assets",
       "sources",
       "templates",
     ]));
@@ -254,7 +255,7 @@ describe("Worker and D1 integration", () => {
   it("serves code-owned built-ins and restores custom storage in one request", async () => {
     const templatesResponse = await workerRequest("/api/templates");
     const initialTemplates = getPath(await jsonObject(templatesResponse), "data");
-    expect(Array.isArray(initialTemplates) ? initialTemplates.length : 0).toBe(6);
+    expect(Array.isArray(initialTemplates) ? initialTemplates.length : 0).toBe(7);
 
     const restoreResponse = await workerRequest("/api/storage", {
       method: "POST",

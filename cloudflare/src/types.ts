@@ -93,6 +93,8 @@ export type TemplateProxyGroup = {
   type: "select" | "url-test" | "fallback" | "load-balance" | string;
   proxies?: string[];
   filter?: string;
+  "include-all"?: boolean;
+  "exclude-filter"?: string;
   url?: string;
   interval?: number;
   tolerance?: number;

@@ -1,20 +1,24 @@
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { createServer } from "node:net";
 import process from "node:process";
 
 const port = await getAvailablePort();
+const pnpmArgs = ["--dir", "cloudflare", "exec", "wrangler", "dev", "--local", "--ip", "127.0.0.1", "--port", String(port), "--config", "wrangler.jsonc"];
+const pnpmCli = process.env.npm_execpath;
 const child = spawn(
-  "pnpm",
-  ["--dir", "cloudflare", "exec", "wrangler", "dev", "--local", "--ip", "127.0.0.1", "--port", String(port), "--config", "wrangler.jsonc"],
+  pnpmCli ? process.execPath : "pnpm",
+  pnpmCli ? [pnpmCli, ...pnpmArgs] : pnpmArgs,
   { cwd: process.cwd(), env: { ...process.env, CI: "1" }, stdio: ["ignore", "pipe", "pipe"] },
 );
 
 let output = "";
+let spawnError;
 child.stdout.on("data", (chunk) => { output = appendOutput(output, chunk); });
 child.stderr.on("data", (chunk) => { output = appendOutput(output, chunk); });
+child.on("error", (error) => { spawnError = error; });
 
 try {
-  const response = await waitForWorker(`http://127.0.0.1:${port}/sw.js`, child);
+  const response = await waitForWorker(`http://127.0.0.1:${port}/sw.js`, child, () => spawnError);
   const body = await response.text();
   if (response.status !== 200 || !body.includes("registration.unregister")) {
     throw new Error(`Unexpected smoke response: ${response.status}`);
@@ -27,12 +31,21 @@ try {
   console.error(output.trim());
   throw error;
 } finally {
-  child.kill("SIGTERM");
+  stopChild(child);
   await Promise.race([
     new Promise((resolve) => child.once("exit", resolve)),
     new Promise((resolve) => setTimeout(resolve, 3000)),
   ]);
-  if (child.exitCode === null) child.kill("SIGKILL");
+  if (child.exitCode === null) stopChild(child, true);
+}
+
+function stopChild(childProcess, force = false) {
+  if (childProcess.exitCode !== null || !childProcess.pid) return;
+  if (process.platform === "win32") {
+    spawnSync("taskkill.exe", ["/pid", String(childProcess.pid), "/t", "/f"], { windowsHide: true, stdio: "ignore" });
+    return;
+  }
+  childProcess.kill(force ? "SIGKILL" : "SIGTERM");
 }
 
 async function getAvailablePort() {
@@ -48,9 +61,10 @@ async function getAvailablePort() {
   return port;
 }
 
-async function waitForWorker(url, processHandle) {
+async function waitForWorker(url, processHandle, getSpawnError) {
   const deadline = Date.now() + 20000;
   while (Date.now() < deadline) {
+    if (getSpawnError()) throw getSpawnError();
     if (processHandle.exitCode !== null) throw new Error(`Wrangler exited with code ${processHandle.exitCode}`);
     try {
       return await fetch(url);

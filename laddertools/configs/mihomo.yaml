@@ -1,0 +1,250 @@
+# Public template for mangataw/LadderTools.
+# Keep secrets and subscription URLs out of this file. The Worker replaces only
+# ${WORKER_ORIGIN}; all rule names remain constrained by its compiled allowlist.
+mixed-port: 7890
+allow-lan: false
+mode: rule
+log-level: info
+
+dns:
+  enable: true
+  ipv6: false
+  enhanced-mode: fake-ip
+  nameserver:
+    - https://doh.pub/dns-query
+    - https://dns.alidns.com/dns-query
+
+proxy-groups:
+  - name: 节点选择
+    type: select
+    proxies: [自动选择, 香港节点, 日本节点, 台湾节点, 美国节点, 狮城节点, 手动切换节点, 手动切换分组, DIRECT]
+  - name: 手动切换节点
+    type: select
+    include-all: true
+  - name: 手动切换分组
+    type: select
+    proxies: [香港节点, 日本节点, 美国节点, 台湾节点, 狮城节点, 韩国节点, 澳洲节点, 德国节点, 荷兰节点, 英国节点, 爱沙节点, DIRECT]
+  - name: 自动选择
+    type: url-test
+    include-all: true
+    url: https://www.gstatic.com/generate_204
+    interval: 600
+    tolerance: 10
+  - name: 香港节点
+    type: url-test
+    include-all: true
+    filter: "(?i)香港|港|HK|Hong Kong|HongKong"
+    url: https://www.gstatic.com/generate_204
+    interval: 600
+    tolerance: 10
+  - name: 日本节点
+    type: url-test
+    include-all: true
+    filter: "(?i)日本|东京|大阪|埼玉|JP|Japan"
+    url: https://www.gstatic.com/generate_204
+    interval: 600
+    tolerance: 10
+  - name: 美国节点
+    type: url-test
+    include-all: true
+    filter: "(?i)美国|美西|美东|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥|US|USA|United States"
+    url: https://www.gstatic.com/generate_204
+    interval: 600
+    tolerance: 20
+  - name: 台湾节点
+    type: url-test
+    include-all: true
+    filter: "(?i)台湾|台北|新北|彰化|TW|Taiwan"
+    url: https://www.gstatic.com/generate_204
+    interval: 600
+    tolerance: 10
+  - name: 狮城节点
+    type: url-test
+    include-all: true
+    filter: "(?i)新加坡|狮城|SG|Singapore"
+    url: https://www.gstatic.com/generate_204
+    interval: 600
+    tolerance: 10
+  - name: 韩国节点
+    type: url-test
+    include-all: true
+    filter: "(?i)韩国|首尔|KR|Korea|KOR|韓國"
+    url: https://www.gstatic.com/generate_204
+    interval: 600
+    tolerance: 10
+  - name: 澳洲节点
+    type: url-test
+    include-all: true
+    filter: "(?i)澳大利亚|澳洲|AU|Australia|AUS"
+    url: https://www.gstatic.com/generate_204
+    interval: 600
+    tolerance: 10
+  - name: 德国节点
+    type: url-test
+    include-all: true
+    filter: "(?i)德国|DE|Germany|Deutschland|GER"
+    url: https://www.gstatic.com/generate_204
+    interval: 600
+    tolerance: 10
+  - name: 荷兰节点
+    type: url-test
+    include-all: true
+    filter: "(?i)荷兰|NL|Netherlands|Holland"
+    url: https://www.gstatic.com/generate_204
+    interval: 600
+    tolerance: 10
+  - name: 英国节点
+    type: url-test
+    include-all: true
+    filter: "(?i)英国|UK|England|GB|GBR"
+    url: https://www.gstatic.com/generate_204
+    interval: 600
+    tolerance: 10
+  - name: 爱沙节点
+    type: url-test
+    include-all: true
+    filter: "(?i)爱沙尼亚|EE|Estonia|EST"
+    url: https://www.gstatic.com/generate_204
+    interval: 600
+    tolerance: 10
+  - name: 非日节点
+    type: url-test
+    include-all: true
+    exclude-filter: "(?i)日本|东京|大阪|埼玉|JP|Japan"
+    url: https://www.gstatic.com/generate_204
+    interval: 600
+    tolerance: 10
+  - name: 奈飞节点
+    type: select
+    include-all: true
+    filter: "(?i)NF|奈飞|解锁|Netflix|Media"
+  - name: AI
+    type: select
+    proxies: [日本节点, 美国节点, 狮城节点, 澳洲节点, 德国节点]
+  - name: 电报消息
+    type: select
+    proxies: [香港节点, 节点选择, 狮城节点, 台湾节点, 日本节点, 美国节点, 韩国节点, 手动切换分组, DIRECT]
+  - name: 谷歌服务
+    type: select
+    proxies: [日本节点, 美国节点, 香港节点, 台湾节点, 狮城节点, 韩国节点, 澳洲节点]
+  - name: 游戏平台
+    type: select
+    proxies: [美国节点, 日本节点, 节点选择, 香港节点, 台湾节点, 狮城节点, 韩国节点, 手动切换分组, DIRECT]
+  - name: 油管视频
+    type: select
+    proxies: [节点选择, 狮城节点, 香港节点, 台湾节点, 日本节点, 美国节点, 韩国节点, 手动切换分组, DIRECT]
+  - name: 奈飞视频
+    type: select
+    proxies: [奈飞节点, 节点选择, 狮城节点, 香港节点, 台湾节点, 日本节点, 美国节点, 韩国节点, 手动切换分组, DIRECT]
+  - name: 巴哈姆特
+    type: select
+    proxies: [台湾节点, 节点选择, 手动切换分组, DIRECT]
+  - name: 国外媒体
+    type: select
+    proxies: [节点选择, 香港节点, 台湾节点, 狮城节点, 日本节点, 美国节点, 韩国节点, 手动切换分组, DIRECT]
+  - name: 微软云盘
+    type: select
+    proxies: [DIRECT, 节点选择, 美国节点, 香港节点, 台湾节点, 狮城节点, 日本节点, 韩国节点, 手动切换分组]
+  - name: 微软服务
+    type: select
+    proxies: [DIRECT, 节点选择, 美国节点, 香港节点, 台湾节点, 狮城节点, 日本节点, 韩国节点, 手动切换分组]
+  - name: 苹果服务
+    type: select
+    proxies: [DIRECT, 节点选择, 美国节点, 香港节点, 台湾节点, 狮城节点, 日本节点, 韩国节点, 手动切换分组]
+  - name: 网易音乐
+    type: select
+    proxies: [DIRECT, 节点选择]
+  - name: 哔哩哔哩
+    type: select
+    proxies: [DIRECT, 节点选择, 台湾节点, 香港节点, 手动切换分组]
+  - name: 国内媒体
+    type: select
+    proxies: [DIRECT, 节点选择, 香港节点, 台湾节点, 狮城节点, 日本节点, 手动切换分组]
+  - name: 全球直连
+    type: select
+    proxies: [DIRECT, 节点选择, 手动切换分组]
+  - name: 广告拦截
+    type: select
+    proxies: [REJECT, DIRECT]
+  - name: 应用净化
+    type: select
+    proxies: [REJECT, DIRECT]
+  - name: 漏网之鱼
+    type: select
+    proxies: [DIRECT, 节点选择, 香港节点, 台湾节点, 狮城节点, 日本节点, 美国节点, 韩国节点, 手动切换分组]
+
+rule-providers:
+  custom_direct: {type: http, behavior: classical, format: text, path: ./ruleset/custom_direct.list, url: "${WORKER_ORIGIN}/rules/custom_direct.list", interval: 86400}
+  custom_ai: {type: http, behavior: classical, format: text, path: ./ruleset/custom_ai.list, url: "${WORKER_ORIGIN}/rules/custom_ai.list", interval: 86400}
+  custom_us: {type: http, behavior: classical, format: text, path: ./ruleset/custom_us.list, url: "${WORKER_ORIGIN}/rules/custom_us.list", interval: 86400}
+  custom_japan: {type: http, behavior: classical, format: text, path: ./ruleset/custom_japan.list, url: "${WORKER_ORIGIN}/rules/custom_japan.list", interval: 86400}
+  custom_japan_not: {type: http, behavior: classical, format: text, path: ./ruleset/custom_japan_not.list, url: "${WORKER_ORIGIN}/rules/custom_japan_not.list", interval: 86400}
+  custom_proxy: {type: http, behavior: classical, format: text, path: ./ruleset/custom_proxy.list, url: "${WORKER_ORIGIN}/rules/custom_proxy.list", interval: 86400}
+  ai_common: {type: http, behavior: classical, format: text, path: ./ruleset/ai_common.list, url: "${WORKER_ORIGIN}/rules/ai_common.list", interval: 86400}
+  google: {type: http, behavior: classical, format: text, path: ./ruleset/google.list, url: "${WORKER_ORIGIN}/rules/google.list", interval: 86400}
+  google_fcm: {type: http, behavior: classical, format: text, path: ./ruleset/google_fcm.list, url: "${WORKER_ORIGIN}/rules/google_fcm.list", interval: 86400}
+  telegram: {type: http, behavior: classical, format: text, path: ./ruleset/telegram.list, url: "${WORKER_ORIGIN}/rules/telegram.list", interval: 86400}
+  telegram_cidr: {type: http, behavior: ipcidr, format: text, path: ./ruleset/telegram_cidr.list, url: "${WORKER_ORIGIN}/rules/telegram_cidr.list", interval: 86400}
+  game: {type: http, behavior: classical, format: text, path: ./ruleset/game.list, url: "${WORKER_ORIGIN}/rules/game.list", interval: 86400}
+  github: {type: http, behavior: classical, format: text, path: ./ruleset/github.list, url: "${WORKER_ORIGIN}/rules/github.list", interval: 86400}
+  onedrive: {type: http, behavior: classical, format: text, path: ./ruleset/onedrive.list, url: "${WORKER_ORIGIN}/rules/onedrive.list", interval: 86400}
+  microsoft: {type: http, behavior: classical, format: text, path: ./ruleset/microsoft.list, url: "${WORKER_ORIGIN}/rules/microsoft.list", interval: 86400}
+  apple: {type: http, behavior: classical, format: text, path: ./ruleset/apple.list, url: "${WORKER_ORIGIN}/rules/apple.list", interval: 86400}
+  youtube: {type: http, behavior: classical, format: text, path: ./ruleset/youtube.list, url: "${WORKER_ORIGIN}/rules/youtube.list", interval: 86400}
+  netflix: {type: http, behavior: classical, format: text, path: ./ruleset/netflix.list, url: "${WORKER_ORIGIN}/rules/netflix.list", interval: 86400}
+  bahamut: {type: http, behavior: classical, format: text, path: ./ruleset/bahamut.list, url: "${WORKER_ORIGIN}/rules/bahamut.list", interval: 86400}
+  global_media: {type: http, behavior: classical, format: text, path: ./ruleset/global_media.list, url: "${WORKER_ORIGIN}/rules/global_media.list", interval: 86400}
+  ads_awavenue: {type: http, behavior: classical, format: text, path: ./ruleset/ads_awavenue.list, url: "${WORKER_ORIGIN}/rules/ads_awavenue.list", interval: 86400}
+  ads_acl4ssr: {type: http, behavior: classical, format: text, path: ./ruleset/ads_acl4ssr.list, url: "${WORKER_ORIGIN}/rules/ads_acl4ssr.list", interval: 86400}
+  program_ads: {type: http, behavior: classical, format: text, path: ./ruleset/program_ads.list, url: "${WORKER_ORIGIN}/rules/program_ads.list", interval: 86400}
+  lan: {type: http, behavior: classical, format: text, path: ./ruleset/lan.list, url: "${WORKER_ORIGIN}/rules/lan.list", interval: 86400}
+  netease_music: {type: http, behavior: classical, format: text, path: ./ruleset/netease_music.list, url: "${WORKER_ORIGIN}/rules/netease_music.list", interval: 86400}
+  bilibili: {type: http, behavior: classical, format: text, path: ./ruleset/bilibili.list, url: "${WORKER_ORIGIN}/rules/bilibili.list", interval: 86400}
+  china_media: {type: http, behavior: classical, format: text, path: ./ruleset/china_media.list, url: "${WORKER_ORIGIN}/rules/china_media.list", interval: 86400}
+  china_domain: {type: http, behavior: classical, format: text, path: ./ruleset/china_domain.list, url: "${WORKER_ORIGIN}/rules/china_domain.list", interval: 86400}
+  china_company_ip: {type: http, behavior: classical, format: text, path: ./ruleset/china_company_ip.list, url: "${WORKER_ORIGIN}/rules/china_company_ip.list", interval: 86400}
+  download: {type: http, behavior: classical, format: text, path: ./ruleset/download.list, url: "${WORKER_ORIGIN}/rules/download.list", interval: 86400}
+  private_domain: {type: http, behavior: domain, format: text, path: ./ruleset/private_domain.list, url: "${WORKER_ORIGIN}/rules/private_domain.list", interval: 86400}
+  applications: {type: http, behavior: classical, format: text, path: ./ruleset/applications.list, url: "${WORKER_ORIGIN}/rules/applications.list", interval: 86400}
+  cn_cidr: {type: http, behavior: ipcidr, format: text, path: ./ruleset/cn_cidr.list, url: "${WORKER_ORIGIN}/rules/cn_cidr.list", interval: 86400}
+  proxy_domain: {type: http, behavior: domain, format: text, path: ./ruleset/proxy_domain.list, url: "${WORKER_ORIGIN}/rules/proxy_domain.list", interval: 86400}
+  proxy_gfw: {type: http, behavior: classical, format: text, path: ./ruleset/proxy_gfw.list, url: "${WORKER_ORIGIN}/rules/proxy_gfw.list", interval: 86400}
+
+rules:
+  - RULE-SET,custom_direct,全球直连
+  - RULE-SET,custom_ai,AI
+  - RULE-SET,custom_us,美国节点
+  - RULE-SET,custom_japan,日本节点
+  - RULE-SET,custom_japan_not,非日节点
+  - RULE-SET,custom_proxy,节点选择
+  - RULE-SET,ai_common,AI
+  - RULE-SET,google,谷歌服务
+  - RULE-SET,google_fcm,谷歌服务
+  - RULE-SET,telegram,电报消息
+  - RULE-SET,telegram_cidr,电报消息
+  - RULE-SET,game,游戏平台
+  - RULE-SET,github,节点选择
+  - RULE-SET,onedrive,微软云盘
+  - RULE-SET,microsoft,微软服务
+  - RULE-SET,apple,苹果服务
+  - RULE-SET,youtube,油管视频
+  - RULE-SET,netflix,奈飞视频
+  - RULE-SET,bahamut,巴哈姆特
+  - RULE-SET,global_media,国外媒体
+  - RULE-SET,ads_awavenue,广告拦截
+  - RULE-SET,ads_acl4ssr,广告拦截
+  - RULE-SET,program_ads,应用净化
+  - RULE-SET,lan,全球直连
+  - RULE-SET,netease_music,网易音乐
+  - RULE-SET,bilibili,哔哩哔哩
+  - RULE-SET,china_media,国内媒体
+  - RULE-SET,china_domain,全球直连
+  - RULE-SET,china_company_ip,全球直连
+  - RULE-SET,download,全球直连
+  - RULE-SET,private_domain,全球直连
+  - RULE-SET,applications,全球直连
+  - RULE-SET,cn_cidr,全球直连
+  - RULE-SET,proxy_domain,节点选择
+  - RULE-SET,proxy_gfw,节点选择
+  - GEOIP,CN,全球直连,no-resolve
+  - MATCH,漏网之鱼

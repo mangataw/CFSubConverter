@@ -8,9 +8,9 @@ Deploy Sub-Store Cloudflare into the user's Cloudflare account, import their sub
 
 ## Product Boundary
 
-- Keep the app Cloudflare-native and small: Workers Static Assets + Worker API + D1 + Worker Secrets.
-- Use D1 for structured configuration. Do not switch to R2/KV/Durable Objects/Queues/Cron/Pages unless the user explicitly changes the architecture and the code is updated for it.
-- The public data model is `sources`, `collections`, `templates`, `filters`, `settings`, `sourceIds`, scoped `download_grants`, and bounded `recycle_bin` entries.
+- Keep the app Cloudflare-native and small: Workers Static Assets + Worker API + D1 + KV + Worker Secrets.
+- Use D1 for structured configuration and remote-asset metadata; use KV only for validated last-success template/rule bodies. Do not add R2/Durable Objects/Queues/Cron/Pages unless the user explicitly changes the architecture and the code is updated for it.
+- The public data model is `sources`, `collections`, `templates`, `filters`, `settings`, `sourceIds`, scoped `download_grants`, bounded `recycle_bin` entries, and `remote_assets` metadata.
 - Treat upstream Sub-Store as a reference for retained source, collection, filter, template, preview, backup/restore, and download workflows only.
 - Do not add files, Gist sync, public sharing, unbounded archives, runtime-evaluated scripts, logs, queues, cron, or artifact features during install or cleanup work. Build-time bundled Filter / Operator scripts, scoped download grants, and the bounded configuration recycle bin are supported through the existing pipeline.
 
@@ -63,6 +63,8 @@ Ask only for missing inputs. Prefer reasonable defaults when the user does not c
   - custom admin domain plus separate download domain.
 - D1 database:
   - create or reuse `sub-store-cloudflare`, or use an explicit database id.
+- KV namespace:
+  - let Wrangler provision `ASSET_SNAPSHOTS`, or reuse an explicit namespace id.
 - Admin token and download token:
   - user-provided, env-provided, or generated locally.
 - Sources:

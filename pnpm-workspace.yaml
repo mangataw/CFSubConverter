@@ -1,6 +1,8 @@
 packages:
   - frontend
   - cloudflare
+overrides:
+  source-map-js: ^1.2.2
 allowBuilds:
   '@parcel/watcher': true
   esbuild: true

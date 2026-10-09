@@ -21,6 +21,20 @@ const databaseName = stringValue(deployment.d1DatabaseName, "sub-store-cloudflar
 const downloadHostname = stringValue(deployment.downloadHostname, "");
 const adminHostname = stringValue(deployment.adminHostname, "");
 const appName = stringValue(existingConfig?.vars?.SUB_STORE_APP_NAME, "Sub-Store Cloudflare");
+const kvNamespaceId = stringValue(deployment.kvNamespaceId, stringValue(existingConfig?.kv_namespaces?.[0]?.id, ""));
+const remoteTemplateId = stringValue(deployment.remoteTemplateId, stringValue(existingConfig?.vars?.REMOTE_TEMPLATE_ID, "github-mihomo"));
+const remoteTemplateUrl = stringValue(
+  deployment.remoteTemplateUrl,
+  stringValue(existingConfig?.vars?.REMOTE_TEMPLATE_URL, "https://raw.githubusercontent.com/mangataw/LadderTools/main/configs/mihomo.yaml"),
+);
+const remoteTemplateAllowedHosts = stringValue(
+  deployment.remoteTemplateAllowedHosts,
+  stringValue(existingConfig?.vars?.REMOTE_TEMPLATE_ALLOWED_HOSTS, "raw.githubusercontent.com"),
+);
+const remoteAssetCacheSeconds = stringValue(
+  deployment.remoteAssetCacheSeconds,
+  stringValue(existingConfig?.vars?.REMOTE_ASSET_CACHE_SECONDS, "300"),
+);
 const routes = [];
 
 if (adminHostname && !adminHostname.endsWith(".workers.dev")) {
@@ -45,7 +59,8 @@ const config = {
   },
   observability: {
     enabled: true,
-    head_sampling_rate: 1,
+    logs: { enabled: true, head_sampling_rate: 1 },
+    traces: { enabled: true, head_sampling_rate: 0.01 },
   },
   secrets: {
     required: ["SUB_STORE_ADMIN_TOKEN", "SUB_STORE_PUBLIC_DOWNLOAD_TOKEN"],
@@ -58,9 +73,20 @@ const config = {
       migrations_dir: "./migrations",
     },
   ],
+  kv_namespaces: [
+    {
+      binding: "ASSET_SNAPSHOTS",
+      ...(kvNamespaceId ? { id: kvNamespaceId } : {}),
+    },
+  ],
   vars: {
     SUB_STORE_APP_NAME: appName,
     SUB_STORE_PUBLIC_DOWNLOAD_HOSTS: downloadHostname,
+    REMOTE_TEMPLATE_ID: remoteTemplateId,
+    REMOTE_TEMPLATE_URL: remoteTemplateUrl,
+    REMOTE_TEMPLATE_ALLOWED_HOSTS: remoteTemplateAllowedHosts,
+    REMOTE_ASSET_CACHE_SECONDS: remoteAssetCacheSeconds,
+    ALLOW_TEMPORARY_SOURCE_OVERRIDE: "false",
   },
   ...(routes.length > 0 ? { routes } : {}),
 };
@@ -75,6 +101,7 @@ console.log(
       output: outputArg,
       workerName,
       databaseName,
+      kvNamespace: kvNamespaceId || "automatic provisioning",
       routes: routes.length,
     },
     null,

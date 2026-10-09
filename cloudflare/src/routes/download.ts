@@ -4,6 +4,7 @@ import { failed, isTokenValid } from "../lib/http";
 import { authorizeScopedDownload } from "../lib/compatibility-resources";
 import { buildSubscriptionResult, getTargetContentType, normalizeTarget, normalizeTargetAlias } from "../lib/subscription";
 import { getRoutingTemplate, getSettings, getSource, getSubscriptionCollection, getSubscriptionSources } from "../lib/store";
+import { loadRemoteRoutingTemplate, RemoteAssetUnavailableError } from "../lib/remote-assets";
 import type { SubscriptionCollection, SubscriptionSource, SubscriptionTarget } from "../types";
 
 export const downloadRoutes = new Hono<{ Bindings: SubStoreEnv }>();
@@ -63,14 +64,15 @@ async function renderDownload(
     templateId?: string;
   },
 ) {
+  const forceRefresh = ["1", "true"].includes(c.req.query("refresh") || c.req.query("noCache") || "");
   const sourceOverride = getTemporarySourceOverride(c);
   const sources = sourceOverride ? applyTemporarySourceOverride(options.sources, sourceOverride, options.collection) : options.sources;
   const source = sourceOverride && options.source ? applyTemporarySourceOverride([options.source], sourceOverride)[0] : options.source;
-  const [template, settings] = await Promise.all([
-    getRoutingTemplate(c.env, options.templateId),
-    getSettings(c.env),
-  ]);
   try {
+    const [template, settings] = await Promise.all([
+      getDownloadTemplate(c, options.templateId, forceRefresh),
+      getSettings(c.env),
+    ]);
     const result = await buildSubscriptionResult({
       source,
       collection: options.collection,
@@ -80,7 +82,7 @@ async function renderDownload(
       template,
       settings,
       requestUserAgent: c.req.header("user-agent") || "",
-      forceRefresh: ["1", "true"].includes(c.req.query("refresh") || c.req.query("noCache") || ""),
+      forceRefresh,
       waitUntil: (promise) => c.executionCtx.waitUntil(promise),
     });
     const headers = new Headers({
@@ -94,8 +96,17 @@ async function renderDownload(
     setResponseHeader(headers, "x-sub-store-cache", result.metadata.cacheStatus);
     return new Response(result.body, { headers });
   } catch (error) {
-    return failed(c, error instanceof Error ? error.message : String(error), 500);
+    const status = error instanceof RemoteAssetUnavailableError ? 503 : 500;
+    return failed(c, error instanceof Error ? error.message : String(error), status);
   }
+}
+
+async function getDownloadTemplate(c: DownloadContext, templateId: string | undefined, forceRefresh: boolean) {
+  const remoteTemplateId = String(c.env.REMOTE_TEMPLATE_ID || "github-mihomo").trim() || "github-mihomo";
+  if (templateId === remoteTemplateId) {
+    return (await loadRemoteRoutingTemplate(c.env, new URL(c.req.url).origin, forceRefresh)).template;
+  }
+  return getRoutingTemplate(c.env, templateId);
 }
 
 function setResponseHeader(headers: Headers, name: string, value: string | undefined) {
@@ -109,6 +120,7 @@ type TemporarySourceOverride = {
 };
 
 function getTemporarySourceOverride(c: DownloadContext): TemporarySourceOverride | undefined {
+  if (String(c.env.ALLOW_TEMPORARY_SOURCE_OVERRIDE || "false").toLowerCase() !== "true") return undefined;
   const url = stringQuery(c, "url");
   const content = stringQuery(c, "content");
   const ua = stringQuery(c, "ua") || stringQuery(c, "userAgent") || stringQuery(c, "user-agent");

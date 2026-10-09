@@ -234,6 +234,7 @@ function withoutEmojiLabels(input: unknown): unknown {
 export const ACL4SSR_NO_EMOJI_TEMPLATE = withoutEmojiLabels(ACL4SSR_TEMPLATE) as RoutingTemplateConfig;
 
 export const BUILTIN_TEMPLATES = [
+  { id: "github-mihomo", name: "GitHub Mihomo（动态同步）", target: "mihomo", config: MIHOMO_BASIC_TEMPLATE },
   { id: "mihomo-basic", name: "Mihomo Basic", target: "mihomo", config: MIHOMO_BASIC_TEMPLATE },
   { id: "acl4ssr-mihomo", name: "ACL4SSR Mihomo", target: "mihomo", config: ACL4SSR_TEMPLATE },
   { id: "acl4ssr-mihomo-no-emoji", name: "ACL4SSR Mihomo 无 Emoji", target: "mihomo", config: ACL4SSR_NO_EMOJI_TEMPLATE },

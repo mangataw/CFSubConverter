@@ -50,7 +50,7 @@ JavaScript Filter / Operator 随 Worker 一起由 Wrangler 编译，D1 只保存
 - 运行时脚本字符串、远程脚本加载和脚本市场。构建时打包的受限 Filter / Operator 按上面的免费版设计单独评估。
 - 日志面板。
 - 队列、定时任务、后台 artifact 生成。
-- KV、R2、Durable Objects、Queues、Cron 等额外 Cloudflare 组件。Workers Cache API 只作为非持久优化。
+- R2、Durable Objects、Queues、Cron 等额外 Cloudflare 组件。KV 仅用于校验后的远程模板/规则最后成功副本，Workers Cache API 仍只作为非持久优化。
 - 多后端兼容层或完整上游 API 兼容层。
 
 这些能力在原版 Sub-Store 里有各自价值，但会把这个仓库从“订阅配置器”推向更大的平台型系统。

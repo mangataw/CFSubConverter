@@ -29,7 +29,7 @@ Cloudflare Worker
   |-- Worker Secrets                 管理端 token / 下载 token
 ```
 
-核心路径只需要 Workers、D1 和 Secrets。Cache API 是自动降级的边缘优化；KV、R2、Durable Objects、Queue、Cron 都不是必要组件。
+核心路径需要 Workers、D1、KV 和 Secrets。D1 保存结构化配置与远程资源元数据，KV 只保存校验通过的模板/规则最后成功副本；R2、Durable Objects、Queue、Cron 都不是必要组件。
 
 ## 数据模型
 

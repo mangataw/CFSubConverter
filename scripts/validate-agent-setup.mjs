@@ -7,6 +7,7 @@ const config = JSON.parse(readFileSync(inputPath, "utf8"));
 const rulePresets = JSON.parse(readFileSync(resolve("config/rule-presets.json"), "utf8"));
 
 const BUILTIN_TEMPLATE_IDS = new Set([
+  "github-mihomo",
   "mihomo-basic",
   "acl4ssr-mihomo",
   "acl4ssr-mihomo-no-emoji",

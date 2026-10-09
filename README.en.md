@@ -10,7 +10,7 @@
 
 Run subscription sources, self-hosted nodes, processing actions, and routing templates in your own Cloudflare Worker, then give each client one final subscription URL.
 
-The app uses Workers Static Assets + Worker API + D1 + Worker Secrets and is designed around Workers Free limits. It does not require a separate server, KV, R2, Durable Objects, Queues, or Cron.
+This fork uses Workers Static Assets + Worker API + D1 + KV + Worker Secrets and is designed around Workers Free limits. KV stores only validated last-success template and rule bodies. It does not require a separate server, R2, Durable Objects, Queues, Cron, or Containers.
 
 Chinese is the primary documentation language: [README.md](README.md).
 

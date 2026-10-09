@@ -1,6 +1,11 @@
 {
   "templates": [
     {
+      "id": "github-mihomo",
+      "label": "GitHub Mihomo dynamic",
+      "useWhen": "Use the validated LadderTools YAML fetched at request time with KV last-success fallback."
+    },
+    {
       "id": "acl4ssr-mihomo",
       "label": "ACL4SSR default",
       "useWhen": "Balanced default for most users, with ad blocking, AI, media, Telegram, Apple, Microsoft, China direct, and fallback routing."

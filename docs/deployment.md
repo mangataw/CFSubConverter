@@ -8,7 +8,7 @@
 2. Agent / CLI 一键安装器：适合需要导入订阅源、创建组合订阅和返回下载链接的用户。
 3. 手动 Wrangler 部署：适合需要完全控制每一步的人。
 
-默认架构保持 Cloudflare-native：Workers Static Assets + Worker API + D1 + Worker Secrets。Workers Cache API 只用于可自动降级的远程订阅短期缓存，不需要额外 provision。
+默认架构保持 Cloudflare-native：Workers Static Assets + Worker API + D1 + KV + Worker Secrets。Workers Cache API 用于机场订阅短期缓存，KV 用于校验后的模板/规则最后成功副本；Wrangler 可自动 provision KV。
 
 ## 1. Cloudflare 官方一键部署
 
@@ -71,7 +71,7 @@ pnpm run tokens:generate
 
 - 安装依赖。
 - 检查 Wrangler 和 Cloudflare 登录。
-- 创建或复用 D1。
+- 创建或复用 D1，并由 Wrangler 自动 provision 或绑定 KV。
 - 生成 `cloudflare/wrangler.deploy.local.jsonc`。
 - 生成或使用 `SUB_STORE_ADMIN_TOKEN` / `SUB_STORE_PUBLIC_DOWNLOAD_TOKEN`。
 - 写入 Worker secrets。

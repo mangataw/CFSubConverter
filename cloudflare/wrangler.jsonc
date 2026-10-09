@@ -13,7 +13,8 @@
   },
   "observability": {
     "enabled": true,
-    "head_sampling_rate": 1
+    "logs": { "enabled": true, "head_sampling_rate": 1 },
+    "traces": { "enabled": true, "head_sampling_rate": 0.01 }
   },
   "secrets": {
     "required": [
@@ -28,8 +29,18 @@
       "database_id": "00000000-0000-0000-0000-000000000000"
     }
   ],
+  "kv_namespaces": [
+    {
+      "binding": "ASSET_SNAPSHOTS"
+    }
+  ],
   "vars": {
     "SUB_STORE_APP_NAME": "Sub-Store Cloudflare",
-    "SUB_STORE_PUBLIC_DOWNLOAD_HOSTS": ""
+    "SUB_STORE_PUBLIC_DOWNLOAD_HOSTS": "",
+    "REMOTE_TEMPLATE_ID": "github-mihomo",
+    "REMOTE_TEMPLATE_URL": "https://raw.githubusercontent.com/mangataw/LadderTools/main/configs/mihomo.yaml",
+    "REMOTE_TEMPLATE_ALLOWED_HOSTS": "raw.githubusercontent.com",
+    "REMOTE_ASSET_CACHE_SECONDS": "300",
+    "ALLOW_TEMPORARY_SOURCE_OVERRIDE": "false"
   }
 }

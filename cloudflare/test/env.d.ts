@@ -5,6 +5,7 @@ declare global {
   namespace Cloudflare {
     interface Env extends SubStoreEnv {
       TEST_MIGRATIONS: D1Migration[];
+      TEST_REMOTE_TEMPLATE: string;
     }
 
     interface GlobalProps {

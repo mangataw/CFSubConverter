@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { apiRoutes } from "./routes/api";
 import { downloadRoutes } from "./routes/download";
+import { ruleRoutes } from "./routes/rules";
 import { applyCorsHeaders, applySecurityHeaders } from "./lib/http";
 
 const app = new Hono<{ Bindings: SubStoreEnv }>();
@@ -36,6 +37,7 @@ app.options("*", (c) => {
 });
 
 app.route("/api", apiRoutes);
+app.route("/", ruleRoutes);
 app.route("/", downloadRoutes);
 // Keep these upgrade cleanup endpoints so older browser registrations
 // unregister themselves after moving to the current frontend.
@@ -57,7 +59,11 @@ export default {
       .map((host) => host.trim().toLowerCase())
       .filter(Boolean);
 
-    if (publicDownloadHosts.includes(hostname) && !url.pathname.startsWith("/download/")) {
+    if (
+      publicDownloadHosts.includes(hostname)
+      && !url.pathname.startsWith("/download/")
+      && !url.pathname.startsWith("/rules/")
+    ) {
       return applySecurityHeaders(new Response("Not Found", {
         status: 404,
         headers: {

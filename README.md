@@ -6,11 +6,11 @@
 [![D1](https://img.shields.io/badge/Storage-D1-F38020?logo=cloudflare&logoColor=white)](https://developers.cloudflare.com/d1/)
 [![Workers Free](https://img.shields.io/badge/Designed_for-Workers_Free-2F7DFF)](docs/upstream-compatibility.md)
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/realchendahuang/sub-store-cloudflare)
-
 把机场订阅、自建节点、节点处理和分流模板放到你自己的 Cloudflare Worker 中，最终只给客户端一个订阅链接。
 
-项目采用 Workers Static Assets + Worker API + D1 + Worker Secrets，按 Cloudflare 免费版边界设计并验证。无需自建服务器，也不需要 KV、R2、Durable Objects、Queues 或 Cron。
+本分支增加了 GitHub 动态模板、白名单规则镜像和 KV 最后成功副本，采用 Workers Static Assets + Worker API + D1 + KV + Worker Secrets。无需自建服务器，也不需要 R2、Durable Objects、Queues、Cron 或 Containers。
+
+先阅读：[实现说明](IMPLEMENTATION.zh-CN.md) · [你需要完成的操作](USER-ACTIONS.zh-CN.md) · [安全审计](SECURITY-AUDIT.zh-CN.md)。本分支尚未发布到公开 GitHub，因此不要使用上游项目的 Deploy 按钮；按操作文档使用本地 Wrangler 安装器部署。
 
 English: [README.en.md](README.en.md)
 
@@ -32,7 +32,7 @@ node -e "const{randomBytes:r}=require('node:crypto');console.log(r(32).toString(
 
 - 把仓库导入到你的 GitHub/GitLab 账号；
 - 创建 Worker；
-- 自动创建或选择 D1 数据库；
+- 自动创建或选择 D1 数据库和 KV 命名空间；
 - 要求你填写两个 Token；
 - 执行 `pnpm run build` 和 `pnpm run deploy`。
 
@@ -71,7 +71,7 @@ corepack enable
 pnpm run install:cloudflare
 ```
 
-安装器会询问 Worker 名称、自定义域名和可选订阅 URL，然后自动安装依赖、登录检查、创建 D1、生成 Token、迁移、部署、导入并验证。
+安装器会询问 Worker 名称、自定义域名和可选订阅 URL，然后自动安装依赖、登录检查、创建 D1/KV、生成 Token、迁移、部署、导入并验证。
 
 只想部署空应用：
 

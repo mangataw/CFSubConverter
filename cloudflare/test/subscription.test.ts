@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { parse as parseYaml } from "yaml";
 import {
   MAX_REMOTE_SOURCE_RESPONSE_BYTES,
   MAX_REMOTE_SOURCE_URLS,
@@ -108,6 +109,36 @@ describe("subscription parsing and limits", () => {
     });
     const payload: unknown = JSON.parse(output);
     expect(payload && typeof payload === "object" ? Reflect.get(payload, "proxies") : undefined).toHaveLength(1);
+  });
+
+  it("expands include-all filters and exclude-filter without regex lookaheads", async () => {
+    const output = await buildSubscription({
+      source: {
+        id: "regions",
+        name: "Regions",
+        type: "local",
+        url: "",
+        content: [
+          "trojan://password@jp.example.com:443#JP%20Tokyo",
+          "trojan://password@us.example.com:443#US%20Seattle",
+        ].join("\n"),
+      },
+      sources: [],
+      requestUrl: new URL("https://example.com/download/source/regions/mihomo"),
+      target: "mihomo",
+      template: {
+        config: {
+          proxyGroups: [
+            { name: "日本节点", type: "url-test", "include-all": true, filter: "(?i)JP|Japan" },
+            { name: "非日节点", type: "url-test", "include-all": true, "exclude-filter": "(?i)JP|Japan" },
+          ],
+          rules: ["MATCH,非日节点"],
+        },
+      },
+    });
+    const parsed = parseYaml(output) as { "proxy-groups": Array<{ name: string; proxies: string[] }> };
+    expect(parsed["proxy-groups"].find((group) => group.name === "日本节点")?.proxies).toEqual(["JP Tokyo"]);
+    expect(parsed["proxy-groups"].find((group) => group.name === "非日节点")?.proxies).toEqual(["US Seattle"]);
   });
 
   it("runs build-time script operators with arguments", async () => {

@@ -249,10 +249,10 @@ async function fetchSubscriptionUrl(
     const requestHeaders: Record<string, string> = { "user-agent": getSourceUserAgent(sub, settings, requestUserAgent) };
     if (cached?.headers.get("x-sub-store-etag")) requestHeaders["if-none-match"] = cached.headers.get("x-sub-store-etag") || "";
     if (cached?.headers.get("x-sub-store-last-modified")) requestHeaders["if-modified-since"] = cached.headers.get("x-sub-store-last-modified") || "";
-    const response = await fetch(url, {
+    const response = await fetchWithRedirectLimit(url, {
       headers: requestHeaders,
       signal: controller.signal,
-    });
+    }, 2);
     if (response.status === 304 && cached) {
       return {
         content: await readResponseText(cached, MAX_REMOTE_SOURCE_RESPONSE_BYTES, `Cached remote source ${sub.name}`),
@@ -279,6 +279,27 @@ async function fetchSubscriptionUrl(
   } finally {
     clearTimeout(timeoutId);
   }
+}
+
+async function fetchWithRedirectLimit(url: string, init: RequestInit, maxRedirects: number) {
+  let current = new URL(url);
+  if (!/^https?:$/.test(current.protocol) || current.username || current.password) {
+    throw new Error("Remote source URL must use HTTP(S) without embedded credentials");
+  }
+
+  for (let redirectCount = 0; redirectCount <= maxRedirects; redirectCount += 1) {
+    const response = await fetch(current.toString(), { ...init, redirect: "manual" });
+    if (![301, 302, 303, 307, 308].includes(response.status)) return response;
+    const location = response.headers.get("location");
+    await response.body?.cancel();
+    if (!location || redirectCount === maxRedirects) throw new Error("Remote source exceeded redirect limit");
+    const next = new URL(location, current);
+    if (!/^https?:$/.test(next.protocol) || next.username || next.password) {
+      throw new Error("Remote source redirected to a disallowed URL");
+    }
+    current = next;
+  }
+  throw new Error("Remote source exceeded redirect limit");
 }
 
 function getSourceUserAgent(sub: SubscriptionSource, settings?: AppSettings, requestUserAgent?: string) {
@@ -1540,14 +1561,25 @@ function renderTemplateProxyGroups(proxies: ProxyNode[], groupTemplates: Templat
         (name) => nodeNames.includes(name) || includedGroupNames.has(name) || allowedLiterals.has(name),
       );
       if (proxyEntries.length === 0) return undefined;
-      const { filter: _filter, proxies: _proxies, ...rest } = group;
+      const {
+        filter: _filter,
+        proxies: _proxies,
+        "include-all": _includeAll,
+        "exclude-filter": _excludeFilter,
+        ...rest
+      } = group;
       return stripUndefined({ ...rest, proxies: uniqueStrings(proxyEntries) });
     })
     .filter(Boolean);
 }
 
 function expandGroupProxies(group: TemplateProxyGroup, nodeNames: string[]) {
-  const entries = group.filter ? findNamesByRegex(nodeNames, group.filter) : [];
+  let entries = group["include-all"] ? [...nodeNames] : [];
+  if (group.filter) entries = findNamesByRegex(entries.length > 0 ? entries : nodeNames, group.filter);
+  if (group["exclude-filter"]) {
+    const excluded = new Set(findNamesByRegex(entries.length > 0 ? entries : nodeNames, group["exclude-filter"]));
+    entries = (entries.length > 0 ? entries : nodeNames).filter((name) => !excluded.has(name));
+  }
   for (const item of group.proxies || []) {
     if (item === "$all") entries.push(...nodeNames);
     else entries.push(item);

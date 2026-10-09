@@ -73,6 +73,6 @@ POST /api/rule/parse
 - D1 持久请求日志。
 - 无限历史版本。
 - 多用户账号和公开分享平台。
-- KV、R2、Durable Objects、Queues、Cron 或第二个后端。
+- R2、Durable Objects、Queues、Cron 或第二个后端；KV 只保存模板/规则最后成功副本。
 
 这些模块会突破当前免费版 CPU、存储、隐私或产品边界，因此不会用空路由伪装兼容。
