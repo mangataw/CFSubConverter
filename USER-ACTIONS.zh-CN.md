@@ -8,19 +8,19 @@
 将本项目中的：
 
 ```text
-laddertools/configs/mihomo.yaml
+laddertools/configs/mihomo-template.yaml
 ```
 
 复制到你的 `mangataw/LadderTools` 仓库：
 
 ```text
-configs/mihomo.yaml
+configs/mihomo-template.yaml
 ```
 
 检查文件中没有机场 URL、节点或令牌，然后提交并推送。推送后确认下面地址能直接打开：
 
 ```text
-https://raw.githubusercontent.com/mangataw/LadderTools/main/configs/mihomo.yaml
+https://raw.githubusercontent.com/mangataw/LadderTools/main/configs/mihomo-template.yaml
 ```
 
 ## 2. 创建本地私有部署配置
@@ -49,7 +49,7 @@ Copy-Item .\config\agent-setup.example.json .\config\agent-setup.local.json
     "workerName": "sub-store-cloudflare",
     "d1DatabaseName": "sub-store-cloudflare",
     "remoteTemplateId": "github-mihomo",
-    "remoteTemplateUrl": "https://raw.githubusercontent.com/mangataw/LadderTools/main/configs/mihomo.yaml",
+    "remoteTemplateUrl": "https://raw.githubusercontent.com/mangataw/LadderTools/main/configs/mihomo-template.yaml",
     "remoteTemplateAllowedHosts": "raw.githubusercontent.com",
     "remoteAssetCacheSeconds": "300",
     "adminHostname": "",

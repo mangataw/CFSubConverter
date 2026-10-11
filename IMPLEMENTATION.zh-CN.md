@@ -7,7 +7,7 @@ AGPL-3.0-or-later 许可证。
 ## 已实现
 
 - Workers 请求时拉取 D1 中的机场订阅，解析并把节点直接写入最终 `proxies`。
-- `github-mihomo` 模板从 `mangataw/LadderTools/configs/mihomo.yaml` 动态读取。
+- `github-mihomo` 模板从 `mangataw/LadderTools/configs/mihomo-template.yaml` 动态读取。
 - 模板使用 ETag / Last-Modified 条件请求；`refresh=1` 强制重新检查模板和机场订阅。
 - 模板通过 YAML 结构、策略组、规则引用和规则 URL 白名单校验后才进入 KV。
 - `/rules/<name>.list` 只允许编译进代码的规则映射，不接受任意 URL。
@@ -22,7 +22,7 @@ AGPL-3.0-or-later 许可证。
 ## 数据流
 
 ```text
-LadderTools/mihomo.yaml ─┐
+LadderTools/mihomo-template.yaml ─┐
 LadderTools/第三方规则 ──┼─> Worker 条件拉取 ─> 校验 ─> KV 最后成功副本
 D1 私有机场 URL ────────┘              │
                                       └─> 动态节点 + 模板 ─> Mihomo YAML
@@ -40,7 +40,7 @@ D1 私有机场 URL ────────┘              │
 | `deployment.workerName` | Worker 名称 | `sub-store-cloudflare` |
 | `deployment.d1DatabaseName` | D1 名称 | `sub-store-cloudflare` |
 | `deployment.kvNamespaceId` | 复用既有 KV；留空则自动创建 | 留空 |
-| `deployment.remoteTemplateUrl` | GitHub 原始 YAML 地址 | LadderTools `configs/mihomo.yaml` |
+| `deployment.remoteTemplateUrl` | GitHub 原始 YAML 地址 | LadderTools `configs/mihomo-template.yaml` |
 | `deployment.remoteTemplateAllowedHosts` | 模板允许主机白名单 | `raw.githubusercontent.com` |
 | `deployment.remoteAssetCacheSeconds` | 模板/规则检查间隔 | `300` |
 | `deployment.adminHostname` | 可选管理域名 | 留空，使用 `workers.dev` |

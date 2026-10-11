@@ -25,7 +25,7 @@ const kvNamespaceId = stringValue(deployment.kvNamespaceId, stringValue(existing
 const remoteTemplateId = stringValue(deployment.remoteTemplateId, stringValue(existingConfig?.vars?.REMOTE_TEMPLATE_ID, "github-mihomo"));
 const remoteTemplateUrl = stringValue(
   deployment.remoteTemplateUrl,
-  stringValue(existingConfig?.vars?.REMOTE_TEMPLATE_URL, "https://raw.githubusercontent.com/mangataw/LadderTools/main/configs/mihomo.yaml"),
+  stringValue(existingConfig?.vars?.REMOTE_TEMPLATE_URL, "https://raw.githubusercontent.com/mangataw/LadderTools/main/configs/mihomo-template.yaml"),
 );
 const remoteTemplateAllowedHosts = stringValue(
   deployment.remoteTemplateAllowedHosts,

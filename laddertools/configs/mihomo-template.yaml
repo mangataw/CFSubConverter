@@ -1,4 +1,4 @@
-# Public template for mangataw/LadderTools.
+# Public Mihomo template for mangataw/LadderTools.
 # Keep secrets and subscription URLs out of this file. The Worker replaces only
 # ${WORKER_ORIGIN}; all rule names remain constrained by its compiled allowlist.
 mixed-port: 7890

@@ -4,7 +4,7 @@
     "workerName": "sub-store-cloudflare",
     "d1DatabaseName": "sub-store-cloudflare",
     "remoteTemplateId": "github-mihomo",
-    "remoteTemplateUrl": "https://raw.githubusercontent.com/mangataw/LadderTools/main/configs/mihomo.yaml",
+    "remoteTemplateUrl": "https://raw.githubusercontent.com/mangataw/LadderTools/main/configs/mihomo-template.yaml",
     "remoteTemplateAllowedHosts": "raw.githubusercontent.com",
     "remoteAssetCacheSeconds": "300",
     "adminHostname": "",
