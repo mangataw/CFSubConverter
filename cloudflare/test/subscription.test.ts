@@ -4,6 +4,7 @@ import {
   MAX_REMOTE_SOURCE_RESPONSE_BYTES,
   MAX_REMOTE_SOURCE_URLS,
 } from "../src/lib/limits";
+import { BUILTIN_TEMPLATES, MIHOMO_BASIC_TEMPLATE } from "../src/lib/defaults";
 import { readResponseText } from "../src/lib/read";
 import { buildSubscription, buildSubscriptionResult, convertSubscriptionContent, normalizeTargetAlias, validateSubscriptionContent } from "../src/lib/subscription";
 
@@ -38,6 +39,41 @@ describe("subscription parsing and limits", () => {
       });
       expect(output.length, `${target} output`).toBeGreaterThan(0);
     }
+  });
+
+  it("leaves DNS to clients unless a template explicitly configures it", async () => {
+    expect(BUILTIN_TEMPLATES.every((template) => template.config.dns === undefined)).toBe(true);
+
+    const source = {
+      id: "dns-policy",
+      name: "DNS Policy",
+      type: "local" as const,
+      url: "",
+      content: "trojan://password@example.com:443#DNS%20Policy%20Node",
+    };
+    const requestUrl = new URL("https://example.com/download/source/dns-policy/mihomo");
+    const defaultOutput = parseYaml(await buildSubscription({
+      source,
+      sources: [],
+      requestUrl,
+      target: "mihomo",
+      template: { config: MIHOMO_BASIC_TEMPLATE },
+    })) as Record<string, unknown>;
+    expect(defaultOutput.dns).toBeUndefined();
+
+    const explicitOutput = parseYaml(await buildSubscription({
+      source,
+      sources: [],
+      requestUrl,
+      target: "mihomo",
+      template: {
+        config: {
+          ...MIHOMO_BASIC_TEMPLATE,
+          dns: { enable: true, nameserver: ["https://1.1.1.1/dns-query"] },
+        },
+      },
+    })) as Record<string, unknown>;
+    expect(explicitOutput.dns).toEqual({ enable: true, nameserver: ["https://1.1.1.1/dns-query"] });
   });
 
   it("parses JSON5 and converts Surge Mac-only node types", async () => {

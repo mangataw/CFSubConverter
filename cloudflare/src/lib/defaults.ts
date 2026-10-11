@@ -17,13 +17,6 @@ const baseGroups = [
   { name: "🐟 漏网之鱼", type: "select", proxies: ["🚀 节点选择", "DIRECT"] },
 ];
 
-const defaultDns = {
-  enable: true,
-  ipv6: false,
-  "enhanced-mode": "fake-ip",
-  nameserver: ["https://doh.pub/dns-query", "https://dns.alidns.com/dns-query"],
-};
-
 function provider(url: string, behavior: "domain" | "ipcidr" | "classical" = "classical") {
   return {
     type: "http",
@@ -51,7 +44,6 @@ const mihomoBase: Omit<RoutingTemplateConfig, "ruleProviders" | "rules"> = {
   allowLan: false,
   mode: "rule",
   logLevel: "info",
-  dns: defaultDns,
   proxyGroups: baseGroups,
 };
 
