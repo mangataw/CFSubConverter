@@ -18,13 +18,14 @@ describe("persistent remote assets", () => {
   });
 
   it("stores a validated GitHub template and serves the last good copy on failure", async () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(new Response(env.TEST_REMOTE_TEMPLATE, {
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(new Response(env.TEST_REMOTE_TEMPLATE, {
       status: 200,
       headers: { etag: "template-v1" },
     }));
 
     const fresh = await loadRemoteRoutingTemplate(env, "https://worker.example", true);
     expect(fresh.status).toBe("updated");
+    expect(fetchMock.mock.calls[0]?.[1]).toMatchObject({ redirect: "manual" });
     expect(fresh.template.config["proxy-groups"]).toBeTruthy();
     expect(await env.ASSET_SNAPSHOTS.get("last-good:template:github-mihomo")).toContain("custom_proxy");
 

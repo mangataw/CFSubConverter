@@ -12,6 +12,13 @@ This project follows semantic versioning where practical.
 - Removed opinionated DNS defaults from built-in and GitHub templates so client applications can manage DNS without subscription-level conflicts; custom templates can still provide `dns` explicitly.
 - Updated public repository metadata, clone instructions, and Deploy to Cloudflare links for `mangataw/CFSubConverter`.
 
+### Fixed
+
+- Made the installer and Worker bundle budget check invoke the active pnpm entry point correctly on Windows.
+- Removed explicit transaction statements from generated seed SQL because remote D1 imports manage rollback and reject those statements.
+- Switched remote template requests to manual redirect handling, which is supported by the Workers runtime while still rejecting redirect responses.
+- Replaced the per-file Git history privacy scan with an equivalent batched Git search so release checks complete promptly.
+
 ## [1.1.0] - 2026-07-11
 
 ### Added

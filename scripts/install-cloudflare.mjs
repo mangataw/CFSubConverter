@@ -233,13 +233,14 @@ function parseDatabaseId(output) {
 }
 
 function setSecret(key, value) {
-  const result = spawnSync("pnpm", ["--dir", "cloudflare", "exec", "wrangler", "secret", "put", key, "--config", "wrangler.deploy.local.jsonc"], {
+  const invocation = resolveCommand("pnpm", ["--dir", "cloudflare", "exec", "wrangler", "secret", "put", key, "--config", "wrangler.deploy.local.jsonc"]);
+  const result = spawnSync(invocation.command, invocation.args, {
     input: `${value}\n`,
     encoding: "utf8",
     stdio: ["pipe", "pipe", "pipe"],
   });
   if (result.status !== 0) {
-    fail(`Failed to set ${key}.\n${result.stderr || result.stdout}`);
+    fail(`Failed to set ${key}.\n${commandError(result)}`);
   }
   info(`Set Worker secret ${key}.`);
 }
@@ -385,9 +386,10 @@ function maybePrintSetupStatus() {
 }
 
 function checkCommand(command, commandArgs, { label }) {
-  const result = spawnSync(command, commandArgs, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+  const invocation = resolveCommand(command, commandArgs);
+  const result = spawnSync(invocation.command, invocation.args, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
   if (result.status !== 0) {
-    fail(`${label} is required.\n${result.stderr || result.stdout}`);
+    fail(`${label} is required.\n${commandError(result)}`);
   }
   info(`${label}: ${firstLine(result.stdout || result.stderr)}`);
 }
@@ -400,7 +402,8 @@ function run(command, commandArgs, options = {}) {
   }
   info(label);
   const stdio = options.capture ? ["ignore", "pipe", "pipe"] : options.passthrough ? "inherit" : "inherit";
-  const result = spawnSync(command, commandArgs, { encoding: "utf8", stdio });
+  const invocation = resolveCommand(command, commandArgs);
+  const result = spawnSync(invocation.command, invocation.args, { encoding: "utf8", stdio });
   if (options.capture && options.echo) {
     if (result.stdout) process.stdout.write(result.stdout);
     if (result.stderr) process.stderr.write(result.stderr);
@@ -411,13 +414,24 @@ function run(command, commandArgs, options = {}) {
       if (result.stdout) process.stderr.write(result.stdout);
       if (result.stderr) process.stderr.write(result.stderr);
     }
-    fail(`${label} failed.\n${result.stderr || result.stdout || ""}`);
+    fail(`${label} failed.\n${commandError(result)}`);
   }
   return {
     status: result.status || 0,
     stdout: result.stdout || "",
     stderr: result.stderr || "",
   };
+}
+
+function resolveCommand(command, commandArgs) {
+  if (command !== "pnpm") return { command, args: commandArgs };
+  const pnpmEntry = process.env.npm_execpath;
+  if (pnpmEntry) return { command: process.execPath, args: [pnpmEntry, ...commandArgs] };
+  return { command: process.platform === "win32" ? "pnpm.cmd" : "pnpm", args: commandArgs };
+}
+
+function commandError(result) {
+  return result.error?.stack || result.stderr || result.stdout || `Command exited with status ${result.status}`;
 }
 
 function printHandoff() {

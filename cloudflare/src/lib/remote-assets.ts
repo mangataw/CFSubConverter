@@ -124,7 +124,9 @@ async function loadRemoteAsset<T>(env: SubStoreEnv, definition: AssetDefinition<
 
     const response = await fetch(definition.url, {
       headers,
-      redirect: "error",
+      // Workers only supports follow/manual. Manual keeps redirects visible so
+      // the response status is rejected below instead of following off-host.
+      redirect: "manual",
       signal: controller.signal,
     });
 
