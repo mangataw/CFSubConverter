@@ -1,16 +1,18 @@
 # Sub-Store Cloudflare
 
-[![Release](https://img.shields.io/github/v/release/realchendahuang/sub-store-cloudflare?include_prereleases&sort=semver)](https://github.com/realchendahuang/sub-store-cloudflare/releases)
-[![License: AGPL-3.0](https://img.shields.io/github/license/realchendahuang/sub-store-cloudflare)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/mangataw/CFSubConverter?include_prereleases&sort=semver)](https://github.com/mangataw/CFSubConverter/releases)
+[![License: AGPL-3.0](https://img.shields.io/github/license/mangataw/CFSubConverter)](LICENSE)
 [![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-F38020?logo=cloudflare&logoColor=white)](https://developers.cloudflare.com/workers/)
 [![D1](https://img.shields.io/badge/Storage-D1-F38020?logo=cloudflare&logoColor=white)](https://developers.cloudflare.com/d1/)
 [![Workers Free](https://img.shields.io/badge/Designed_for-Workers_Free-2F7DFF)](docs/upstream-compatibility.md)
+
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/mangataw/CFSubConverter)
 
 把机场订阅、自建节点、节点处理和分流模板放到你自己的 Cloudflare Worker 中，最终只给客户端一个订阅链接。
 
 本分支增加了 GitHub 动态模板、白名单规则镜像和 KV 最后成功副本，采用 Workers Static Assets + Worker API + D1 + KV + Worker Secrets。无需自建服务器，也不需要 R2、Durable Objects、Queues、Cron 或 Containers。
 
-先阅读：[实现说明](IMPLEMENTATION.zh-CN.md) · [你需要完成的操作](USER-ACTIONS.zh-CN.md) · [安全审计](SECURITY-AUDIT.zh-CN.md)。本分支尚未发布到公开 GitHub，因此不要使用上游项目的 Deploy 按钮；按操作文档使用本地 Wrangler 安装器部署。
+先阅读：[实现说明](IMPLEMENTATION.zh-CN.md) · [你需要完成的操作](USER-ACTIONS.zh-CN.md) · [安全审计](SECURITY-AUDIT.zh-CN.md)。Deploy 按钮和本地 Wrangler 安装器均使用本仓库版本。
 
 English: [README.en.md](README.en.md)
 
@@ -21,7 +23,7 @@ English: [README.en.md](README.en.md)
 使用密码管理器生成，或者在安装了 Node.js 的电脑运行：
 
 ```bash
-node -e "const{randomBytes:r}=require('node:crypto');console.log(r(32).toString('base64url'));console.log(r(32).toString('base64url'))"
+node --input-type=module -e "import{randomBytes as r}from'node:crypto';console.log(r(32).toString('base64url'));console.log(r(32).toString('base64url'))"
 ```
 
 第一行用于 `SUB_STORE_ADMIN_TOKEN`，第二行用于 `SUB_STORE_PUBLIC_DOWNLOAD_TOKEN`。不要使用 README、截图或示例里的固定字符串。
@@ -65,8 +67,8 @@ node -e "const{randomBytes:r}=require('node:crypto');console.log(r(32).toString(
 需要 Git、Node.js 22+ 和 Corepack：
 
 ```bash
-git clone https://github.com/realchendahuang/sub-store-cloudflare.git
-cd sub-store-cloudflare
+git clone https://github.com/mangataw/CFSubConverter.git
+cd CFSubConverter
 corepack enable
 pnpm run install:cloudflare
 ```

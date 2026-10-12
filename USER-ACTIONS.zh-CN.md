@@ -3,21 +3,21 @@
 以下步骤必须使用你的 GitHub 与 Cloudflare 登录状态，因此不能由未获账号授权的本地任务代办。
 `codex doctor` 与本项目无关；项目使用锁定在仓库里的 Wrangler，不要求全局安装 Codex CLI。
 
-## 1. 把公开模板提交到 LadderTools
+## 1. 确认公开模板可用
 
-将本项目中的：
+公开模板已经发布到 `mangataw/LadderTools`。修改本项目中的：
 
 ```text
 laddertools/configs/mihomo-template.yaml
 ```
 
-复制到你的 `mangataw/LadderTools` 仓库：
+后，需要同步更新 `mangataw/LadderTools` 仓库中的：
 
 ```text
 configs/mihomo-template.yaml
 ```
 
-检查文件中没有机场 URL、节点或令牌，然后提交并推送。推送后确认下面地址能直接打开：
+同步前检查文件中没有机场 URL、节点或令牌。推送后确认下面地址能直接打开：
 
 ```text
 https://raw.githubusercontent.com/mangataw/LadderTools/main/configs/mihomo-template.yaml

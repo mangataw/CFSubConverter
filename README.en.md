@@ -1,12 +1,12 @@
 # Sub-Store Cloudflare
 
-[![Release](https://img.shields.io/github/v/release/realchendahuang/sub-store-cloudflare?include_prereleases&sort=semver)](https://github.com/realchendahuang/sub-store-cloudflare/releases)
-[![License: AGPL-3.0](https://img.shields.io/github/license/realchendahuang/sub-store-cloudflare)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/mangataw/CFSubConverter?include_prereleases&sort=semver)](https://github.com/mangataw/CFSubConverter/releases)
+[![License: AGPL-3.0](https://img.shields.io/github/license/mangataw/CFSubConverter)](LICENSE)
 [![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-F38020?logo=cloudflare&logoColor=white)](https://developers.cloudflare.com/workers/)
 [![D1](https://img.shields.io/badge/Storage-D1-F38020?logo=cloudflare&logoColor=white)](https://developers.cloudflare.com/d1/)
 [![Workers Free](https://img.shields.io/badge/Designed_for-Workers_Free-2F7DFF)](docs/upstream-compatibility.md)
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/realchendahuang/sub-store-cloudflare)
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/mangataw/CFSubConverter)
 
 Run subscription sources, self-hosted nodes, processing actions, and routing templates in your own Cloudflare Worker, then give each client one final subscription URL.
 
@@ -21,7 +21,7 @@ Chinese is the primary documentation language: [README.md](README.md).
 Use a password manager, or run this cross-platform Node.js command:
 
 ```bash
-node -e "const{randomBytes:r}=require('node:crypto');console.log(r(32).toString('base64url'));console.log(r(32).toString('base64url'))"
+node --input-type=module -e "import{randomBytes as r}from'node:crypto';console.log(r(32).toString('base64url'));console.log(r(32).toString('base64url'))"
 ```
 
 Use the first line for `SUB_STORE_ADMIN_TOKEN` and the second for `SUB_STORE_PUBLIC_DOWNLOAD_TOKEN`. Never deploy fixed values copied from documentation or screenshots.
@@ -59,8 +59,8 @@ See the Chinese [five-minute quick start](docs/quick-start.md) for the complete 
 Requires Git, Node.js 22+, and Corepack:
 
 ```bash
-git clone https://github.com/realchendahuang/sub-store-cloudflare.git
-cd sub-store-cloudflare
+git clone https://github.com/mangataw/CFSubConverter.git
+cd CFSubConverter
 corepack enable
 pnpm run install:cloudflare
 ```

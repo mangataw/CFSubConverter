@@ -1,4 +1,4 @@
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 import { denyPatterns, skippedHistoryPaths } from "./open-source-denylist.mjs";
 
 const revisions = process.argv.slice(2).filter((arg) => arg !== "--");
@@ -8,37 +8,22 @@ const commits = execFileSync("git", ["rev-list", ...revListArgs], { encoding: "u
   .split(/\s+/)
   .filter(Boolean);
 
-const skippedArgs = skippedHistoryPaths.flatMap((path) => [`:!${path}`]);
 const findings = [];
 
-for (const commit of commits) {
-  const files = execFileSync("git", ["ls-tree", "-r", "--name-only", "-z", commit], { encoding: "utf8" })
-    .split("\0")
-    .filter(Boolean)
-    .filter((file) => !skippedHistoryPaths.includes(file));
+for (const [pattern, label] of denyPatterns) {
+  const args = ["grep", "-I", "-n", "-E"];
+  if (pattern.flags.includes("i")) args.push("-i");
+  args.push("-e", pattern.source, ...commits, "--", ".", ...skippedHistoryPaths.map((path) => `:!${path}`));
 
-  for (const file of files) {
-    let text;
-    try {
-      text = execFileSync("git", ["show", `${commit}:${file}`], {
-        encoding: "utf8",
-        maxBuffer: 10 * 1024 * 1024,
-        stdio: ["ignore", "pipe", "ignore"],
-      });
-    } catch {
-      continue;
-    }
-
-    const lines = text.split(/\r?\n/);
-    for (const [index, line] of lines.entries()) {
-      for (const [pattern, label] of denyPatterns) {
-        pattern.lastIndex = 0;
-        if (pattern.test(line)) {
-          findings.push(`${commit.slice(0, 12)}:${file}:${index + 1}: ${label}: ${line.trim()}`);
-        }
-      }
-    }
+  const result = spawnSync("git", args, { encoding: "utf8", maxBuffer: 10 * 1024 * 1024 });
+  if (result.error) throw result.error;
+  if (result.status === 1) continue;
+  if (result.status !== 0) {
+    console.error(result.stderr || `git grep exited with status ${result.status}`);
+    process.exit(1);
   }
+
+  findings.push(...result.stdout.split(/\r?\n/).filter(Boolean).map((line) => `${label}: ${line}`));
 }
 
 if (findings.length > 0) {

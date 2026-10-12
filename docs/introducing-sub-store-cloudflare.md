@@ -65,7 +65,7 @@ agent 会替你检查 Cloudflare 登录、建库、写 secret、迁移、部署�
 
 ## 链接
 
-- 仓库：https://github.com/realchendahuang/sub-store-cloudflare
+- 仓库：https://github.com/mangataw/CFSubConverter
 - 部署说明：[deployment.md](deployment.md)
 - Agent 安装：[ai-agent-install.md](ai-agent-install.md)
 - 架构说明：[architecture.md](architecture.md)

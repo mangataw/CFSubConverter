@@ -6,6 +6,12 @@ This project follows semantic versioning where practical.
 
 ## [Unreleased]
 
+### Changed
+
+- Renamed the public routing template to `mihomo-template.yaml` and updated all dynamic-template references.
+- Removed opinionated DNS defaults from built-in and GitHub templates so client applications can manage DNS without subscription-level conflicts; custom templates can still provide `dns` explicitly.
+- Updated public repository metadata, clone instructions, and Deploy to Cloudflare links for `mangataw/CFSubConverter`.
+
 ## [1.1.0] - 2026-07-11
 
 ### Added

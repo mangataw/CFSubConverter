@@ -2,13 +2,13 @@
   "name": "sub-store-cloudflare-workspace",
   "version": "1.1.0",
   "description": "Cloudflare-native dynamic subscription service powered by Workers, Static Assets, D1, KV, and Worker Secrets.",
-  "homepage": "https://github.com/realchendahuang/sub-store-cloudflare#readme",
+  "homepage": "https://github.com/mangataw/CFSubConverter#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/realchendahuang/sub-store-cloudflare.git"
+    "url": "https://github.com/mangataw/CFSubConverter.git"
   },
   "bugs": {
-    "url": "https://github.com/realchendahuang/sub-store-cloudflare/issues"
+    "url": "https://github.com/mangataw/CFSubConverter/issues"
   },
   "license": "AGPL-3.0-or-later",
   "keywords": [

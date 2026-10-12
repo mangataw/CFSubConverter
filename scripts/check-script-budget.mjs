@@ -9,15 +9,13 @@ const RELEASE_BUDGET_BYTES = Math.floor(2.5 * 1024 * 1024);
 const outdir = mkdtempSync(join(tmpdir(), "sub-store-script-budget-"));
 
 try {
-  const generated = spawnSync("pnpm", ["run", "scripts:generate"], { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
-  if (generated.status !== 0) fail(generated.stderr || generated.stdout);
+  const generated = runPnpm(["run", "scripts:generate"]);
+  if (generated.status !== 0) fail(commandError(generated));
 
-  const bundled = spawnSync(
-    "pnpm",
+  const bundled = runPnpm(
     ["--dir", "cloudflare", "exec", "wrangler", "deploy", "--dry-run", "--outdir", outdir, "--config", "../wrangler.jsonc"],
-    { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] },
   );
-  if (bundled.status !== 0) fail(bundled.stderr || bundled.stdout);
+  if (bundled.status !== 0) fail(commandError(bundled));
 
   const worker = readFileSync(join(outdir, "index.js"));
   const compressedBytes = gzipSync(worker).byteLength;
@@ -38,4 +36,15 @@ try {
 function fail(message) {
   console.error(String(message).trim());
   process.exit(1);
+}
+
+function runPnpm(args) {
+  const pnpmEntry = process.env.npm_execpath;
+  const command = pnpmEntry ? process.execPath : process.platform === "win32" ? "pnpm.cmd" : "pnpm";
+  const commandArgs = pnpmEntry ? [pnpmEntry, ...args] : args;
+  return spawnSync(command, commandArgs, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+}
+
+function commandError(result) {
+  return result.error?.stack || result.stderr || result.stdout || `Command exited with status ${result.status}`;
 }

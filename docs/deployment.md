@@ -15,7 +15,7 @@
 README 顶部的按钮：
 
 ```md
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/realchendahuang/sub-store-cloudflare)
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/mangataw/CFSubConverter)
 ```
 
 Cloudflare 会读取根目录 [../wrangler.jsonc](../wrangler.jsonc)，自动 provision D1，并用根目录 `package.json` 的 `build` / `deploy` 脚本构建部署。
@@ -28,7 +28,7 @@ Cloudflare 会读取根目录 [../wrangler.jsonc](../wrangler.jsonc)，自动 pr
 跨平台生成两个 token：
 
 ```bash
-node -e "const{randomBytes:r}=require('node:crypto');console.log(r(32).toString('base64url'));console.log(r(32).toString('base64url'))"
+node --input-type=module -e "import{randomBytes as r}from'node:crypto';console.log(r(32).toString('base64url'));console.log(r(32).toString('base64url'))"
 ```
 
 第一行用于 admin token，第二行用于 download token。两个值必须不同。仓库根目录不提供 `.dev.vars.example`，避免 Cloudflare 部署表单把公开占位字符串当作 Secret 默认值。

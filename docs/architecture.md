@@ -142,6 +142,8 @@ Cloudflare Worker
 
 `proxyGroups[].proxies` 或 `proxy-groups[].proxies` 里可以使用 `$all`，生成时会展开为当前组合订阅里的全部节点。Surge、Surfboard、Loon、Egern、Shadowrocket、Quantumult X、sing-box、v2ray、URI 和 JSON 输出使用同一套节点解析与过滤结果，但不读取 Mihomo 规则模板。
 
+内置模板和默认 GitHub 动态模板不提供 `dns`。OpenClash、Stash、Clash Verge 等客户端通常会在运行时管理或覆盖 DNS，默认省略可避免订阅配置与客户端设置冲突。直接运行 Mihomo 且需要内置 DNS、Fake-IP 或 TUN DNS 劫持时，应通过自定义模板显式添加与运行环境匹配的 `dns`；渲染器会保留该字段。
+
 ## 为什么只用 D1
 
 这个项目的数据是结构化配置，主要是订阅源、组合关系、过滤器和规则模板。D1 可以直接表达这些关系，也方便迁移和导出。大文件、后台任务和跨请求状态都不是核心路径，因此不默认引入其他 Cloudflare 存储或异步组件。
